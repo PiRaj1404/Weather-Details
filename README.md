@@ -1,1 +1,1 @@
-# Weather-Details
+Weather Details:text,speech,pincode,city
