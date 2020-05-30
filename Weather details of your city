@@ -1,0 +1,90 @@
+from tkinter import *
+from tkinter import messagebox 
+from bs4 import BeautifulSoup
+import requests
+import json
+import webbrowser
+def clear():
+    cn.delete(0,END)
+    tempmax.delete(0,END)
+    tempmin.delete(0,END)
+    weather.delete(0,END)
+    hum.delete(0,END)
+    atm.delete(0,END)
+    temp.delete(0,END)
+    
+def calculate():
+    a='http://api.openweathermap.org/data/2.5/weather?appid=0c42f7f6b53b244c78a418f4f181282a&q='
+    city=cn.get()
+    url=a+city
+    html_content = requests.get(url).text
+    soup = BeautifulSoup(html_content, "lxml")
+    y=json.loads(soup.text)
+    if(len(cn.get())==0):
+        messagebox.showerror("Error","Entry field can't be empty")
+        cn.delete(0,END)
+    
+    
+    elif(soup.text[8:11]!='404'):
+        temp1=y['main']['temp_max']
+        temp2=y['main']['temp_min']
+        hum1=y['main']['humidity']
+        weather1=y["weather"][0]["description"]
+        atm1=y['main']['pressure']
+        tem=y['main']['temp']
+        tempmax.insert(15,str(temp1)+"k")
+        tempmin.insert(15,str(temp2)+"k")
+        hum.insert(15,str(hum1)+"%")
+        weather.insert(15,str(weather1))
+        atm.insert(15,str(atm1)+"hPa")
+        temp.insert(15,str(tem)+"K")
+        
+    else:
+        messagebox.showerror('City not found','Enter correct city name')
+        cn.delete(0,END)
+        
+    
+def info():
+    if(len(cn.get())==0):
+        messagebox.showerror("Error","Entry field can't be empty")
+        cn.delete(0,END)
+    else:
+        url = "https://en.wikipedia.org/wiki/"
+        urll=url+cn.get()
+        new=1
+        webbrowser.open(urll,new=new)
+      
+
+screen=Tk()
+screen.geometry("500x250")
+screen.title("Current weather details")
+Label(screen,text=" Enter city name  ",fg='red',bg='pink').grid(row=1,column=0)
+Label(text="Weather Description   ",fg='red',bg='pink').grid(row=3,column=0)
+Label(text="Temperature  ",fg='red',bg='pink').grid(row=6,column=0)
+Label(text="Max Temp   ",fg='red',bg='pink').grid(row=9,column=0)
+Label(text="Min Temp  ",fg='red',bg='pink').grid(row=12,column=0)
+Label(text="Humidity  ",fg='red',bg='pink').grid(row=15,column=0)
+Label(text="Atm pressure  ",fg='red',bg='pink').grid(row=18,column=0)
+
+
+
+cn=Entry(screen)
+tempmax=Entry(screen)
+hum=Entry(screen)
+tempmin=Entry(screen)
+weather=Entry(screen)
+atm=Entry(screen)
+temp=Entry(screen)
+
+Button(screen,text="Calculate",bg="red",fg='black',width="10",height="2",command=calculate).grid(row=2,column=2)
+Button(screen,text="Clear All",bg="black",fg='red',width="10",height="2",command=clear).grid(row=20,column=2)
+Button(screen, text = "Get City Information",fg='red',width="15",height="2",command=info).grid(row=20,column=1)
+
+cn.grid(row=1,column=1)
+weather.grid(row=3,column=1)
+temp.grid(row=6,column=1)
+tempmax.grid(row=9,column=1)
+tempmin.grid(row=12,column=1)
+hum.grid(row=15,column=1)
+atm.grid(row=18,column=1)
+
